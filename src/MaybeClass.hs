@@ -2,7 +2,7 @@
 
 module MaybeClass where
 
-import Prelude (Show(..), (<>), undefined) -- for show instances
+import Prelude (Show(..), (<>), undefined, ($)) -- for show instances
 import qualified Data.Maybe as Maybe
 import qualified Data.Bool as Bool -- for testing
 
@@ -43,34 +43,34 @@ fromMaybe def m = maybe def id m
 
 -- | The isNothing function returns 'true' iff its argument is 'nothing'.
 isNothing :: (MaybeClass m, BoolClass b) => m a -> b
-isNothing = undefined
+isNothing ma = maybe true (const false) ma
 
 -- >>> isNothing (nothing :: Maybe.Maybe a) :: Bool.Bool
 -- True
 
 -- | The isJust function returns 'true' iff its argument is of the form @'just' _@.
 isJust :: (MaybeClass m, BoolClass b) => m a -> b
-isJust = undefined
+isJust ma = maybe false (const true) ma
 
 -- >>> isJust (nothing :: Maybe.Maybe a) :: Bool.Bool
 -- False
 
 -- | The 'Functor' instance for 'MaybeClass'
 maybeFMap :: MaybeClass m => (a -> b) -> m a -> m b
-maybeFMap = undefined
+maybeFMap f = maybe nothing (just . f)
 
 -- >>> maybeFMap not (just true) :: Maybe.Maybe Bool.Bool
 -- Just False
 
 -- | The 'Monad' instance for 'MaybeClass'
 maybeBind :: MaybeClass m => (a -> m b) -> m a -> m b
-maybeBind = undefined
+maybeBind f = maybe nothing f
 
 newtype CMaybe a = CMaybe { getCMaybe :: forall b . b -> (a -> b) -> b }
 
 instance MaybeClass CMaybe where
-  nothing = undefined
-  just x = undefined
+  nothing = CMaybe $ \n _ -> n
+  just x = CMaybe $ \_ j -> j x
   maybe n j m = getCMaybe m n j
 
 -- >>> fromMaybe true (just false :: CMaybe CBool)

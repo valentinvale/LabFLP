@@ -1,6 +1,6 @@
 module PairClass where
 
-import Prelude (Show(..), (<>), undefined) -- for show
+import Prelude (Show(..), (<>), undefined, const, id) -- for show
 import qualified Data.Tuple as Tuple
 
 import BoolClass -- for testing
@@ -22,18 +22,18 @@ instance PairClass (,) where
 
 -- | curry converts a functio on pairs to a curried function (of two arguments).
 curry :: (PairClass p) => (p a b -> c) -> a -> b -> c
-curry = undefined
+curry f x y = f (pair x y)
 
 -- | Extract the first component of a pair.
 fst :: (PairClass p) => p a b -> a
-fst = undefined
+fst = uncurry const
 
 -- >>> curry (fst :: (CBool, CMaybe CBool) -> CBool) true (just false)
 -- CTrue
 
 -- | Extract the second component of a pair.
 snd :: (PairClass p) => p a b -> b
-snd = undefined
+snd = uncurry (const id)
 
 -- >>> snd (pair true (just false) :: (CBool, CMaybe CBool))
 -- CJust CFalse
@@ -42,11 +42,11 @@ newtype CPair a b = CPair { getCPair :: forall c . (a -> b -> c) -> c }
 
 instance PairClass CPair where
   uncurry f p = getCPair p f
-  pair = undefined
+  pair x y = CPair (\f -> f x y)
 
 -- | converting between different instances of 'PairClass'
 fromPairClass :: (PairClass p, PairClass q) => p a b -> q a b
-fromPairClass = uncurry pair
+fromPairClass p = pair (fst p) (snd p)
 
 -- | 'Show' instance for 'CPair a b' (via transformation into Haskell pairs)
 instance (Show a, Show b) => Show (CPair a b) where
