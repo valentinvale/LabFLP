@@ -1,3 +1,6 @@
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module PairClass where
 
 import Prelude (Show(..), (<>), undefined, const, id) -- for show

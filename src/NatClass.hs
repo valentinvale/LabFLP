@@ -1,3 +1,6 @@
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module NatClass where
 
 import Prelude (Show(..), (<>), Num(fromInteger), undefined)
@@ -66,43 +69,46 @@ pred a = iter (just . (maybe zero succ)) nothing a
 -- CNothing
 
 -- | Difference between natural numbers as a 'MaybeClass' ('nothing' if first is smaller)
-sub :: NatClass n  => n -> n -> CMaybe n
-sub a b = maybe nothing (just . (iter pred a)) (pred b)  
+-- | Difference between natural numbers as a 'MaybeClass' ('nothing' if first is smaller)
+-- | Difference between natural numbers as a 'MaybeClass' ('nothing' if first is smaller)
+sub :: NatClass n => n -> n -> CMaybe n
+sub a b = iter (\mb -> maybe (just a) pred mb) (just a) b
+
 
 -- >>> sub (exp (add one one) (add one one)) one :: CMaybe Natural.Natural
 -- CJust 3
 
 -- | (Strictly-)Less-Than predicate for natural numbers.
 lt :: NatClass n => n -> n -> CBool 
-lt = undefined
+lt a b = isNothing (sub a b)
 
 -- >>> lt (one :: Natural.Natural) one
 -- CFalse
 
 -- | (Strictly-)Greater-Than predicate for natural numbers.
 gt :: NatClass n => n -> n -> CBool 
-gt = undefined
+gt a b = lt b a
 
 -- >>> gt (one :: Natural.Natural) one
 -- CFalse
 
 -- | Greater-Than-or-Equal-To predicate for natural numbers.
 gte :: NatClass n => n -> n -> CBool 
-gte = undefined
+gte a b = not (lt a b)
 
 -- >>> gte (zero :: Natural.Natural) zero
 -- CTrue
 
 -- | Less-Than-or-Equal-To predicate for natural numbers.
 lte :: NatClass n => n -> n -> CBool 
-lte = undefined
+lte a b = gte b a
 
 -- >>> lte (zero :: Natural.Natural) zero
 -- CTrue
 
 -- | Equality predicate for natural numbers.
 eq :: NatClass n => n -> n -> CBool 
-eq = undefined
+eq a b = (lte a b) && (lte b a)
 
 -- >>> eq (zero :: Natural.Natural) zero
 -- CTrue
@@ -112,7 +118,7 @@ eq = undefined
 
 -- | Returns the greater between its two arguments
 max :: NatClass n => n -> n -> n
-max = undefined
+max a b = if fromBoolClass (lt a b) then b else a
 
 -- >>> max (zero :: Natural.Natural) one
 -- 1
@@ -121,8 +127,8 @@ newtype CNat = CNat { getCNat :: forall a . (a -> a) -> a -> a }
 
 instance NatClass CNat where
   iter f i n = getCNat n f i
-  zero = undefined
-  succ = undefined
+  zero = CNat (\f i -> i)
+  succ n = CNat (\f i -> f (getCNat n f i))
 
 -- | converting between different instances of 'NatClass'
 fromNatClass :: (NatClass n, NatClass m) => n -> m

@@ -1,3 +1,6 @@
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module ListClass where
 
 import Prelude (Show(..), (<>), undefined)
@@ -27,35 +30,35 @@ instance ListClass [] where
 
 -- | Append two lists
 (++) :: (ListClass l) => l a -> l a -> l a
-(++) = undefined
+(++) l l' = foldr cons l' l
 
 -- >>> cons 2 (cons 3 nil) ++ cons 1 (cons 4 (cons 0 nil)) :: [CNat]
 -- [C2,C3,C1,C4,C0]
 
 -- | Returns the length of a list as a 'NatClass'
 length :: ListClass l => l a -> CNat
-length = undefined
+length l = foldr (\_ n -> succ n) zero l
 
 -- >>> length (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- C3
 
 -- | Test whether the list is empty. 
 isNull :: ListClass l => l a -> CBool
-isNull = undefined
+isNull l = isZero (length l)
 
 -- >>> isNull (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- CFalse
 
 -- | 'map' @f@ @xs@ is the list obtained by applying @f@ to each element of @xs@
 map :: ListClass l => (a -> b) -> l a -> l b
-map = undefined
+map f l = foldr (\x l -> cons (f x) l) nil l
 
 -- >>> map (mul 2) (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- [C2,C8,C0]
 
 -- | Applied to a predicate and a list, returns the list of those elements that satisfy the predicate
 filter :: ListClass l => (a -> CBool) -> l a -> l a
-filter = undefined
+filter f l = foldr (\x l -> ite (f x) (cons x l) l) nil l
 
 -- >>> filter (not . isZero :: CNat -> CBool) (cons 1 (cons 4 (cons 0 nil))) :: [CNat]
 -- [C1,C4]
@@ -63,63 +66,68 @@ filter = undefined
 -- | Left-associative fold of a list.
 -- @foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn@
 foldl :: (ListClass l) => (b -> a -> b) -> b -> l a -> b
-foldl = undefined -- hard; use foldr to compute a function which we then apply on z
+foldl f z l = foldr (\b g x -> g (f x b)) id l z -- hard; use foldr to compute a function which we then apply on z
 
 -- >>> foldl exp 2 (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- C1
 
+custom_list :: ListClass l => l a -> l (CPair a CNat) 
+custom_list l = foldl (\l x -> cons (pair x (length l)) l) nil l
+
 -- | Decompose a list into its head and tail ('nothing' for the empty list). 
 uncons :: ListClass l => l a -> CMaybe (CPair a (l a))
-uncons = undefined
+uncons l = ite (isNull l) nothing (just (pair (fromMaybe undefined (head l)) (fromMaybe nil (tail l))))
 
 -- >>> uncons (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- CJust <(C1,[C4,C0])>
 
 -- | Extract the first element of a list into a 'MaybeClass' ('nothing' for the empty list)
 head :: ListClass l => l a -> CMaybe a
-head = undefined
+head l = ite (isNull l) nothing (just (foldr (\x _ -> x) undefined l))
 
 -- >>> head (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- CJust C1
 
 -- | Extract the elements after the head of a list into a 'MaybeClass' ('nothing' for the empty list)
 tail :: ListClass l => l a -> CMaybe (l a)
-tail = undefined
+tail l = ite (isNull l) nothing (just (reverse (map fst (filter (\x -> not (isZero (snd x))) (custom_list l)))))
+
+-- ite (isNull l) nothing (just (foldr (\_ l -> l) nil l))
 
 -- >>> tail (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- CJust [C4,C0]
 
 -- | returns the elements of a list in reverse order.
 reverse :: ListClass l => l a -> l a
-reverse = undefined
+reverse = foldl (\l x -> cons x l) nil
 
 -- >>> reverse (cons 1 (cons 4 (cons 0 nil))) :: [CNat]
 -- [C0,C4,C1]
 
 -- | The 'sum' function computes the sum of a list of numbers.
 sum :: ListClass l => l CNat -> CNat
-sum = undefined
+sum l = foldr add zero l
 
 -- >>> sum (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- C5
 
 -- | The 'product' function computes the product of a list of numbers.
 product :: ListClass l => l CNat -> CNat
-product = undefined
+product l = foldr mul one l
 
 -- >>> product (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- C0
 
 -- | 'maximum' returns the maximum value from a list of naturals ('zero' for the empty list),
 maximum :: ListClass l => l CNat -> CNat
-maximum = undefined
+maximum l = ite (isNull l) zero (foldr max zero l)
 
 -- >>> maximum (cons 1 (cons 4 (cons 0 nil)) :: [CNat])
 -- C4
 
 -- | @'natlist' n@ generates a list containing the numbers from @1@ to @n@, in reverse order.
 natToList :: ListClass l => CNat -> l CNat
-natToList = undefined
+natToList n = ite (isZero n) nil (cons n (natToList (fromMaybe zero (pred n))))
 
 -- >>> natToList 10 :: [CNat]
 -- [C10,C9,C8,C7,C6,C5,C4,C3,C2,C1]
@@ -128,8 +136,8 @@ newtype CList a = CList { getCList :: forall b . (a -> b -> b) -> b -> b}
 
 instance ListClass CList where
   foldr f i l = getCList l f i
-  nil = undefined
-  cons = undefined
+  nil = CList (\_ i -> i)
+  cons x xs = CList (\f i -> f x (getCList xs f i))
 
 -- | converting between different instances of 'ListClass'
 fromListClass :: (ListClass l1, ListClass l2) => l1 a -> l2 a
@@ -141,7 +149,7 @@ instance Show a => Show (CList a) where
 
 -- | computes the factorial of a number
 factorial :: CNat -> CNat
-factorial = undefined
+factorial n = product (natToList n :: CList CNat)
 
 -- >>> factorial 5
 -- C120
