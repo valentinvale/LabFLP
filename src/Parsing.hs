@@ -12,44 +12,71 @@ parseFirst p s
       [] -> Nothing
       (a,_):_ -> Just a
 
-takeword :: String -> String
-takeword "" = ""
-takeword (' ' : xs) = ""
-takeword (x : xs) = x : takeword xs
+haskellId :: Parser String
+haskellId = identifier (satisfy isAlpha) (satisfy isAlphaNum)
 
-letter :: Parser Char
-letter = satisfy isAlpha
-
-
-letternum :: Parser Char
-letternum = satisfy isAlphaNum
+haskellOp :: Parser String
+haskellOp = identifier opSymbol opSymbol
+  where
+    opSymbol = satisfy isOp
+    isOp = (`elem` "`~!@#$%^&*_+=|<>.?/")
 
 var :: Parser Var
-var = fmap Var (identifier letter letternum)
+var = Var <$> (haskellId <|> haskellOp)
 -- >>> parseFirst var "b is a var"
 -- Just (Var {getVar = "b"})
 
 varExp :: Parser ComplexExp
-varExp = fmap CX var
+varExp = CX <$> var
 -- >>> parseFirst varExp "b is a var"
 -- Just (CX (Var {getVar = "b"}))
 
-findSlash :: Parser ()
-findSlash = reserved "\\"
-
-findArrow :: Parser ()
-findArrow = reserved "->"
-
 lambdaExp :: Parser ComplexExp
-lambdaExp = do
-          findSlash
-          var1 <- var
-          findArrow
-          rest <- expr
-          return (CLam var1 rest)
-
+lambdaExp
+  = do
+    symbol "\\"
+    x <- var
+    symbol "->"
+    e <- expr
+    return $ CLam x e 
 -- >>> parseFirst lambdaExp "\\x -> x"
 -- Just (CLam (Var {getVar = "x"}) (CX (Var {getVar = "x"})))
+
+letExp :: Parser ComplexExp
+letExp
+  = do
+    symbol "let"
+    x <- var
+    symbol ":="
+    ex <- expr
+    symbol "in"
+    e <- expr
+    return $ Let x ex e
+-- >>> parseFirst letExp "let x := y in z"
+-- Just (Let (Var {getVar = "x"}) (CX (Var {getVar = "y"})) (CX (Var {getVar = "z"})))
+
+letrecExp :: Parser ComplexExp
+letrecExp
+  = do
+    symbol "letrec"
+    x <- var
+    symbol ":="
+    ex <- expr
+    symbol "in"
+    e <- expr
+    return $ LetRec x ex e
+-- >>> parseFirst letrecExp "letrec x := y in z"
+-- Just (LetRec (Var {getVar = "x"}) (CX (Var {getVar = "y"})) (CX (Var {getVar = "z"})))
+
+listExp :: Parser ComplexExp
+listExp = List <$> brackets (commaSep expr)
+-- >>> parseFirst listExp "[a,b,c]"
+-- Just (List [CX (Var {getVar = "a"}),CX (Var {getVar = "b"}),CX (Var {getVar = "c"})])
+
+natExp :: Parser ComplexExp
+natExp = Nat . fromIntegral <$> natural 
+-- >>> parseFirst natExp "223 a"
+-- Just (Nat 223)
 
 parenExp :: Parser ComplexExp
 parenExp = parens expr
@@ -57,19 +84,19 @@ parenExp = parens expr
 -- Just (CX (Var {getVar = "a"}))
 
 basicExp :: Parser ComplexExp
-basicExp = lambdaExp <|> varExp <|> parenExp
--- >>> parseFirst basicExp "[a,b,c]"r
+basicExp
+  = letrecExp
+  <|> letExp
+  <|> lambdaExp
+  <|> listExp
+  <|> parenExp
+  <|> natExp
+  <|> varExp
+-- >>> parseFirst basicExp "[a,b,c]"
 -- Just (List [CX (Var {getVar = "a"}),CX (Var {getVar = "b"}),CX (Var {getVar = "c"})])
 
-appExp :: Parser ComplexExp
-appExp = do
-            exp1 <- basicExp
-            exp2 <- basicExp
-            rest <- many basicExp
-            return (foldl CApp (CApp exp1 exp2) rest) 
-
 expr :: Parser ComplexExp
-expr = basicExp <|> appExp
+expr = foldl1 CApp <$> some basicExp
 -- >>> parseFirst expr "\\x -> x y z t"
 -- Just (CLam (Var {getVar = "x"}) (CApp (CApp (CApp (CX (Var {getVar = "x"})) (CX (Var {getVar = "y"}))) (CX (Var {getVar = "z"}))) (CX (Var {getVar = "t"}))))
 
