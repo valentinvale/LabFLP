@@ -1,0 +1,44 @@
+C:\Users\valus\AppData\Local\Programs\stack\x86_64-windows\ghc-9.2.7\lib\x86_64-windows-ghc-9.2.7\rts-1.0.2\include\ghcversion.h:
+  hash: 29d6607e92f065af06096e2cf6677b816f36cb00b9c9cf137b6a887fe0a21ffd
+? C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\.stack-work\dist\8a54c84f\build\autogen\Paths_proiectFLP.hs
+: hash: a163c4a47d7cbe710572644abe7accc82bbc6b9b693ddb09faa1cef5ebd57b3c
+? C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\.stack-work\dist\8a54c84f\build\autogen\cabal_macros.h
+: hash: cb7b97cf3f91eee7e2e94762b029a69fa2534abbc65cd2f913cf5c4095ca714b
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\CHANGELOG.md:
+  hash: bf5b5527f0db967e5db454c5f138ab62264d268127ef5bf1be6166d84bd298b8
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\README.md:
+  hash: 06399375a90b32249f4ce6666e70a1d15296916682868baa974c9d385f107621
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\package.yaml:
+  hash: 2de8523b141897d10d846b252d853bb1c0ae3c6940d30c9c2d889416cbe7486d
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\proiectFLP.cabal:
+  hash: eaa864dd1e3afa7b4a844a79e6e79627fe778d70325278c0c4ec62d649cb9cb2
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\BoolClass.hs:
+  hash: 0af75fb8ccd323e3c5bd3b19579d49884a80fb17a3c9a0481fbebf59f1f960be
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\EitherClass.hs:
+  hash: 79c42139d1e640a5429ba9264732328f2be313e1d2d1693126e0ee9d98df505d
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\Eval.hs:
+  hash: 34e220636cbb8b1bd8ea08b690fdc099495d6d846b9937ffe9b95e54bc6eda9a
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\Exp.hs:
+  hash: bdd77363843cf91d0c43c02dde94aa8282fed6c1f8e86da4c8c938c38b33d874
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\Lab2.hs:
+  hash: f427e4b0f444799f6308d22c979d79ffcd437e661169059262be57943569c049
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\Lib.hs:
+  hash: db4525e8bf84e3848123ab8c93c0b30969946090f4c5d48b686a3bdbfbc92017
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\ListClass.hs:
+  hash: 07f52e0b1e2d9cb86c80d78bf27f0e546a0ea05c572c6a08015ff5ad56cc6288
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\MaybeClass.hs:
+  hash: 09b15e512254940f239db34cbf7a0adde7386584b9b7b57bc59a9d34d75875c2
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\MyPrelude.hs:
+  hash: a57df2ea6528ee9a9ae20d5e24ba29b26f56b83d04928fc9052867e12406e9c5
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\NatClass.hs:
+  hash: bb86e144c8ef1dc3bc91baac6f10564825b403fc48950421d4d6eb7b6bd40fc9
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\PairClass.hs:
+  hash: 20f4f08b8893f5001eee0fae5200cd2e1edf59b43c655a6e5415fef4f4552e5c
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\Parsing.hs:
+  hash: 029947acb8961b769de2796c612830dd42c6640bc91d3c0899b8a4a292d3308c
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\Printing.hs:
+  hash: 0d6c43de97717592ce9b72a741ad6bc324f726b1cf30298525acfa1a900a464e
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\REPLCommand.hs:
+  hash: 8ab2bd943d60333a2268222ff106fed3091dacb11e2670d7d0b687ad911685b1
+C:\Users\valus\Desktop\Uni\Anul 2\Semestrul 2\FLP\Laborator\proiect\LabFLP\src\Sugar.hs:
+  hash: e02abbb658b1f9ce340dc30d88b417828f2482666802fdf43c1fb88cae08e7a7

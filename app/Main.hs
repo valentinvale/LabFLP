@@ -13,7 +13,7 @@ import Sugar
 
 main :: IO ()
 main = do
-    putStr "tudorHaskell> "
+    putStr "valentinUCV> "
     hFlush stdout
     line <- getLine
     let parsed = parseFirst replCommand line
